@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  tinyproxy:
+    image: dannydirect/tinyproxy:latest
+    container_name: tinyproxy
+    restart: unless-stopped
+    ports:
+      - "${PROXY_PORT}:8888"
+    environment:
+      - BASICAUTH=${PROXY_USER}:${PROXY_PASSWORD}
+      - TZ=${TIMEZONE}
+    command: ANY
+    networks:
+      - proxy-network
+
+  tinyproxy-admin:
+    image: nginx:alpine
+    container_name: tinyproxy-admin
+    restart: unless-stopped
+    ports:
+      - "${ADMIN_PORT}:80"
+    volumes:
+      - ./admin:/usr/share/nginx/html
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - proxy-network
+    depends_on:
+      - tinyproxy
+
+networks:
+  proxy-network:
+    driver: bridge
