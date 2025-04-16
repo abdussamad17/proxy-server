@@ -2,15 +2,14 @@ version: '3'
 
 services:
   tinyproxy:
-    image: dannydirect/tinyproxy:latest
+    image: monokal/tinyproxy:latest
     container_name: tinyproxy
     restart: unless-stopped
     ports:
       - "${PROXY_PORT}:8888"
     environment:
-      - BASICAUTH=${PROXY_USER}:${PROXY_PASSWORD}
       - TZ=${TIMEZONE}
-    command: ANY
+    command: -p 8888 -a ${PROXY_USER}:${PROXY_PASSWORD} ANY
     networks:
       - proxy-network
 
